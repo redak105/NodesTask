@@ -1,6 +1,6 @@
- //
+//
 //  FavouriteListController.swift
-//  NodesTest
+//  NodesTask
 //
 //  Created by Radek Zmeskal on 10/08/2018.
 //  Copyright © 2018 Radek Zmeskal. All rights reserved.
@@ -10,26 +10,25 @@ import UIKit
 
 class FavouriteListController: UITableViewController {
 
+    /// list of favourites entities
     var favourites: [Favourite] = []
     
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        // Uncomment the following line to preserve selection between presentations
-        // self.clearsSelectionOnViewWillAppear = false
-
-        // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
-        // self.navigationItem.rightBarButtonItem = self.editButtonItem
         
+        // register cell to tableview
         let nib = UINib(nibName: "MovieCell", bundle: nil)
         self.tableView.register(nib, forCellReuseIdentifier: "cellMovie")
         
+        // set table
         self.tableView.tableFooterView = UIView()
     }    
     
     override func viewWillAppear(_ animated: Bool) {
+        // hide navigation bar
         self.navigationController?.navigationBar.isHidden = true
         
+        // load favourites
         if let favourites = DBQueries.fetchFavourites() {
             self.favourites = favourites
         }
@@ -45,12 +44,10 @@ class FavouriteListController: UITableViewController {
     // MARK: - Table view data source
 
     override func numberOfSections(in tableView: UITableView) -> Int {
-        // #warning Incomplete implementation, return the number of sections
         return 1
     }
 
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        // #warning Incomplete implementation, return the number of rows
         return self.favourites.count
     }
 
@@ -69,8 +66,8 @@ class FavouriteListController: UITableViewController {
     }
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        // get favourite and show detail
         let favourite = self.favourites[indexPath.row]
-        
         self.performSegue(withIdentifier: "segueDetail", sender: favourite)
     }
 
@@ -113,9 +110,7 @@ class FavouriteListController: UITableViewController {
     
     // In a storyboard-based application, you will often want to do a little preparation before navigation
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destinationViewController.
-        // Pass the selected object to the new view controller.
-        
+        // set favourite to detail
         if let controller = segue.destination as? MovieDetailController {
             if let favourite = sender as? Favourite {
                 controller.favourite = favourite

@@ -1,6 +1,6 @@
 //
 //  Date.swift
-//  NodesTest
+//  NodesTask
 //
 //  Created by Radek Zmeskal on 09/08/2018.
 //  Copyright © 2018 Radek Zmeskal. All rights reserved.
@@ -12,7 +12,7 @@ extension Date {
     
     /// custom inicialization
     ///
-    /// - Parameter string: date in format "yyyy-MM-dd HH:mm:ss"
+    /// - Parameter string: date in format "yyyy-MM-dd"
     init?( string: String) {
         let formatter = DateFormatter()
         formatter.dateFormat = "yyyy-MM-dd"
@@ -23,7 +23,7 @@ extension Date {
         self = date
     }
     
-    /// Format date to format "hh:mm dd.MM.yyyy"
+    /// Format date to format "dd.MM.yyyy"
     ///
     /// - Returns: string representation
     func format() -> String {

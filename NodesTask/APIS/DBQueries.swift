@@ -1,6 +1,6 @@
 //
 //  DBQueries.swift
-//  NodesTest
+//  NodesTask
 //
 //  Created by Radek Zmeskal on 10/08/2018.
 //  Copyright © 2018 Radek Zmeskal. All rights reserved.
@@ -11,6 +11,10 @@ import CoreData
 
 class DBQueries: NSObject {
     
+    /// Add movie
+    ///
+    /// - Parameter movie: moview to add
+    /// - Returns: new Favourite object
     class func addToFavourite(movie: Movie) -> Favourite? {
         let appDelegate = UIApplication.shared.delegate as! AppDelegate
         let context = appDelegate.persistentContainer.viewContext
@@ -25,7 +29,7 @@ class DBQueries: NSObject {
             let result = try context.fetch(request)
             
             if let result = result as? [Favourite], result.count > 0 {
-                
+                // update finded entity
                 let favourite = result[0]
                                 
                 favourite.id = movie.id
@@ -41,13 +45,13 @@ class DBQueries: NSObject {
                     
                     return favourite
                 } catch {
-                    print("Failed saving")
-                    
+                    print("Failed saving updated entity")
                     return nil
                 }
             }
         } catch {
-            print("Failed")
+            print("Failed search for favourite to added it")
+            return nil
         }
         
         // create new entity
@@ -67,8 +71,7 @@ class DBQueries: NSObject {
                 
                 return favourite
             } catch {
-                print("Failed saving")
-                
+                print("Failed saving new Favourite entity")                
                 return nil
             }
         }
@@ -76,45 +79,34 @@ class DBQueries: NSObject {
         return nil
     }
     
+    /// Remove entity from favourite
+    ///
+    /// - Parameter favourite: entity to delete
+    /// - Returns: succes of operation
     class func removeFromFavourite(favourite: Favourite) -> Bool {
         let appDelegate = UIApplication.shared.delegate as! AppDelegate
         let context = appDelegate.persistentContainer.viewContext
         
-        /// search if entity is already created
-        let request = NSFetchRequest<NSFetchRequestResult>(entityName: "Favourite")
-        
-        request.predicate = NSPredicate(format: "id = %d", favourite.id )
-        request.returnsObjectsAsFaults = false
+        context.delete(favourite)
         
         do {
-            let result = try context.fetch(request)
+            try context.save()
             
-            if let result = result as? [Favourite], result.count > 0 {
-                
-                for favourite in result {
-                    context.delete(favourite)
-                }
-                
-                do {
-                    try context.save()
-                    
-                    return true
-                } catch {
-                    print("Failed saving")
-                }
-            }
+            return true
         } catch {
-            print("Failed")
+            print("Failed saving of updates of DB by deleteding Favourites entity")
         }
         
         return false
     }
     
+    /// Load all Favourites entities
+    ///
+    /// - Returns: list of entities
     class func fetchFavourites() -> [Favourite]? {
         let appDelegate = UIApplication.shared.delegate as! AppDelegate
         let context = appDelegate.persistentContainer.viewContext
         
-        /// search if entity is already created
         let request = NSFetchRequest<NSFetchRequestResult>(entityName: "Favourite")
         request.returnsObjectsAsFaults = false
         
@@ -125,7 +117,7 @@ class DBQueries: NSObject {
                 return result
             }
         } catch {
-            print("Failed")
+            print("Failed load Favourite entities")
         }
         
         return nil

@@ -1,6 +1,6 @@
 //
 //  APICalls.swift
-//  NodesTest
+//  NodesTask
 //
 //  Created by Radek Zmeskal on 09/08/2018.
 //  Copyright © 2018 Radek Zmeskal. All rights reserved.
@@ -16,10 +16,15 @@ let URL_MOVIE_DETAIL = URL_SERVER + "3/movie/"
 
 class APICalls: NSObject {
 
-    class func creteURL(url: String) -> String {
-        return URL_IMAGE + url
+    /// Create URL fo images
+    ///
+    /// - Parameter path: path to create to load image
+    /// - Returns: url to image
+    class func createURLImage(path: String) -> String {
+        return URL_IMAGE + path
     }
     
+    /// Cancel all request
     class func cancelAllRequests() {
         Alamofire.SessionManager.default.session.getTasksWithCompletionHandler { (sessionDataTask, uploadData, downloadData) in
             sessionDataTask.forEach { $0.cancel() }
@@ -28,6 +33,11 @@ class APICalls: NSObject {
         }
     }
     
+    /// Load movies from server
+    ///
+    /// - Parameters:
+    ///   - query: string to search
+    ///   - completion: responce callback
     class func fetchMovies(query: String, completion: @escaping ([Movie]?) -> Void) {
         guard let url = URL(string: URL_MOVIES) else {
             completion(nil)
@@ -42,18 +52,26 @@ class APICalls: NSObject {
             )
             .validate()
             .responseJSON { response in
+                // test success
                 guard response.result.isSuccess else {
-                    print("Error while fetching from remote")
+                    print("Failed request to load movies from server")
+                    
+                    if let alamoError = response.result.error {
+                        print(alamoError)
+                    }
+                    
                     completion(nil)
                     return
                 }
                 
                 guard let value = response.result.value as? [String: Any] else {
+                    print("Failed parse response of request to load movies from server")
                     completion(nil)
                     return
                 }
                 
                 guard let result = value["results"] as? [[String: Any]] else {
+                    print("Failed parse results of request to load movies from server")
                     completion(nil)
                     return
                 }
@@ -63,6 +81,11 @@ class APICalls: NSObject {
         }
     }
     
+    /// Load detail of movies from server
+    ///
+    /// - Parameters:
+    ///   - id: id of movie
+    ///   - completion: responce callback
     class func fetchMovieDetail(id: Int32, completion: @escaping ([String: Any]?) -> Void) {
         guard let url = URL(string: URL_MOVIE_DETAIL + String(id)) else {
             completion(nil)
@@ -77,12 +100,18 @@ class APICalls: NSObject {
             .validate()
             .responseJSON { response in
                 guard response.result.isSuccess else {
-                    print("Error while fetching from remote")
+                    print("Failed request to load movie detail from server")
+                    
+                    if let alamoError = response.result.error {
+                        print(alamoError)
+                    }
+                    
                     completion(nil)
                     return
                 }
                 
                 guard let result = response.result.value as? [String: Any] else {
+                    print("Failed parse response of request to movie detail from server")
                     completion(nil)
                     return
                 }

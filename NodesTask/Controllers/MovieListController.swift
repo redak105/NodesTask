@@ -1,6 +1,6 @@
 //
 //  MovieListController.swift
-//  NodesTest
+//  NodesTask
 //
 //  Created by Radek Zmeskal on 09/08/2018.
 //  Copyright © 2018 Radek Zmeskal. All rights reserved.
@@ -21,28 +21,31 @@ class MovieListController: UIViewController, UITableViewDelegate, UITableViewDat
     @IBOutlet weak var buttonOrder: UIButton!
     @IBOutlet weak var buttonAsc: UIButton!
     
+    /// list movies
     var movies: [Movie] = []
     
-    var ascending: Bool = true
+    /// type of ordr
+    var order: Bool = true
+    /// type of sorting
     var sorting: Sorting = .title
 
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        // Uncomment the following line to preserve selection between presentations
-        // self.clearsSelectionOnViewWillAppear = false
-
-        // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
-        // self.navigationItem.rightBarButtonItem = self.editButtonItem
         
+        // register cell to tableview
         let nib = UINib(nibName: "MovieCell", bundle: nil)
         self.tableView.register(nib, forCellReuseIdentifier: "cellMovie")
         
+        // set table
         self.tableView.tableFooterView = UIView()
         
+        // set buttons
+        self.buttonOrder.setTitle(self.sorting.rawValue.uppercased(), for: .normal)
+        self.buttonAsc.setTitle("ASC", for: .normal)
     }
     
     override func viewWillAppear(_ animated: Bool) {
+        // hide navigation bar
         self.navigationController?.navigationBar.isHidden = true
     }
 
@@ -54,12 +57,10 @@ class MovieListController: UIViewController, UITableViewDelegate, UITableViewDat
     // MARK: - Table view data source
 
     func numberOfSections(in tableView: UITableView) -> Int {
-        // #warning Incomplete implementation, return the number of sections
         return 1
     }
 
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        // #warning Incomplete implementation, return the number of rows
         return self.movies.count
     }
     
@@ -77,10 +78,11 @@ class MovieListController: UIViewController, UITableViewDelegate, UITableViewDat
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        // hide keyboard
         self.textSearch.resignFirstResponder()
         
+        // get movie and show detail
         let movie = self.movies[indexPath.row]
-        
         self.performSegue(withIdentifier: "segueDetail", sender: movie)
     }
 
@@ -124,9 +126,7 @@ class MovieListController: UIViewController, UITableViewDelegate, UITableViewDat
 
     // In a storyboard-based application, you will often want to do a little preparation before navigation
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destinationViewController.
-        // Pass the selected object to the new view controller.
-        
+        // set movie to detail
         if let controller = segue.destination as? MovieDetailController {
             if let movie = sender as? Movie {
                 controller.movie = movie
@@ -134,20 +134,28 @@ class MovieListController: UIViewController, UITableViewDelegate, UITableViewDat
         }
     }
     
+    // MARK: - Functions
+    
+    /// Load list of movies
+    ///
+    /// - Parameter query: query string
     func loadMovies(query: String?) {
+        // check string
         guard let queryString = query else {
             return
         }
         
         APICalls.fetchMovies(query: queryString) { (response) in
+            // test response
             if let movies = response {
                 self.movies = movies
             } else {
                 self.movies = []
             }
             
+            // sort and order result
             self.movies.sort(by: { (movie1, movie2) -> Bool in
-                if self.ascending {
+                if self.order {
                     switch self.sorting {
                     case .title:
                         return movie1.title < movie2.title
@@ -188,34 +196,46 @@ class MovieListController: UIViewController, UITableViewDelegate, UITableViewDat
         }
     }
     
-    // IBAction
+    // MARK: - IBAction
     
+    /// TextField changed
+    ///
+    /// - Parameter sender: sender UITextField
     @IBAction func textFieldChanged(_ sender: UITextField) {
         if let query = sender.text {
+            // cancel old request
             APICalls.cancelAllRequests()
             self.loadMovies(query: query)
         } else {
+            // clear data
             self.movies = []
             self.tableView.reloadData()
         }
     }
     
+    /// Action to clear search textfield
+    ///
+    /// - Parameter sender: sender UIButton
     @IBAction func touchClear(_ sender: UIButton) {
         self.textSearch.text = ""
         self.movies = []
         self.tableView.reloadData()
     }
     
+    /// Action to hide keyboard
+    ///
+    /// - Parameter sender: sender UITextField
     @IBAction func hideKeyboard(_ sender: UITextField) {
         sender.resignFirstResponder()
     }
     
     /// Action to show sorting options
     ///
-    /// - Parameter sender: <#sender description#>
+    /// - Parameter sender: sender AnyObject
     @IBAction func touchSort(_ sender: AnyObject)
     {
-        let alert = UIAlertController(title: "Sort", message: "Please sorting option", preferredStyle: .actionSheet)
+        // create selection of sorting
+        let alert = UIAlertController(title: "Sort", message: "Please select sorting option", preferredStyle: .actionSheet)
         
         alert.addAction(UIAlertAction(title: "Title", style: .default , handler:{ (UIAlertAction)in
             self.sorting = .title
@@ -236,33 +256,33 @@ class MovieListController: UIViewController, UITableViewDelegate, UITableViewDat
         }))
         
         alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler:{ (UIAlertAction)in
-            print("User click Dismiss button")
+            
         }))
         
         self.present(alert, animated: true, completion: nil)
     }
     
-    /// Action to show sorting options
+    /// Action to show order options
     ///
-    /// - Parameter sender: <#sender description#>
-    @IBAction func touchASC(_ sender: AnyObject)
+    /// - Parameter sender: sender AnyObject
+    @IBAction func touchOrder(_ sender: AnyObject)
     {
-        let alert = UIAlertController(title: "Sorting", message: "Please sorting option", preferredStyle: .actionSheet)
+        let alert = UIAlertController(title: "Ordreing", message: "Please select order option", preferredStyle: .actionSheet)
         
         alert.addAction(UIAlertAction(title: "Ascending", style: .default , handler:{ (UIAlertAction)in
-            self.ascending = true
+            self.order = true
             self.buttonAsc.setTitle("ASC", for: .normal)
             self.loadMovies(query: self.textSearch.text)
         }))
         
         alert.addAction(UIAlertAction(title: "Descending", style: .default , handler:{ (UIAlertAction)in
-            self.ascending = false
+            self.order = false
             self.buttonAsc.setTitle("DES", for: .normal)
             self.loadMovies(query: self.textSearch.text)
         }))
         
         alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler:{ (UIAlertAction)in
-            print("User click Dismiss button")
+            
         }))
         
         self.present(alert, animated: true, completion: nil)

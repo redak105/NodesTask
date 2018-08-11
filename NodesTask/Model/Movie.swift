@@ -1,6 +1,6 @@
 //
 //  Movie.swift
-//  NodesTest
+//  NodesTask
 //
 //  Created by Radek Zmeskal on 09/08/2018.
 //  Copyright © 2018 Radek Zmeskal. All rights reserved.
@@ -11,11 +11,17 @@ import SwiftyJSON
 
 class Movie: NSObject {
     
+    /// identificatoe
     let id: Int32
+    /// average vote
     let vote: Float?
+    /// title
     let title: String
+    /// path to poster image
     let posterPath: String
+    /// release date
     let releseDate: Date?
+    /// language
     let language: String
     
     init( id: Int32, vote: Float, title: String, posterPath: String, releseDate: Date, language: String ) {
@@ -54,23 +60,3 @@ class Movie: NSObject {
     }
 }
 
-
-//"vote_count": 2583,
-//"id": 447332,
-//"video": false,
-//"vote_average": 7.1,
-//"title": "A Quiet Place",
-//"popularity": 52.408,
-//"poster_path": "/nAU74GmpUk7t5iklEp3bufwDq4n.jpg",
-//"original_language": "en",
-//"original_title": "A Quiet Place",
-//"genre_ids": [
-//18,
-//27,
-//53,
-//878
-//],
-//"backdrop_path": "/roYyPiQDQKmIKUEhO912693tSja.jpg",
-//"adult": false,
-//"overview": "A family is forced to live in silence while hiding from creatures that hunt by sound.",
-//"release_date": "2018-04-03"

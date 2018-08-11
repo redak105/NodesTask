@@ -1,6 +1,6 @@
 //
 //  MovieCell.swift
-//  NodesTest
+//  NodesTask
 //
 //  Created by Radek Zmeskal on 09/08/2018.
 //  Copyright © 2018 Radek Zmeskal. All rights reserved.
@@ -16,21 +16,22 @@ class MovieCell: UITableViewCell {
     @IBOutlet weak var labelLang: UILabel!
     @IBOutlet weak var labelVote: UILabel!
     
-    
+    /// movie object
     var movie:Movie?
+    /// favourite entity
     var favourite:Favourite?
     
     override func awakeFromNib() {
         super.awakeFromNib()
-        // Initialization code
     }
 
     override func setSelected(_ selected: Bool, animated: Bool) {
         super.setSelected(selected, animated: animated)
-
-        // Configure the view for the selected state
     }
     
+    /// Setup cell for movie object
+    ///
+    /// - Parameter movie: movie object
     func setupCell(movie: Movie) {
         self.movie = movie
         
@@ -42,7 +43,7 @@ class MovieCell: UITableViewCell {
             self.labelVote.text = ""
         }
         
-        if let url =  URL(string: APICalls.creteURL(url: movie.posterPath)) {
+        if let url =  URL(string: APICalls.createURLImage(path: movie.posterPath)) {
             let placeholderImage = UIImage(named: "posterPlaceholder")!
             self.imageCover.af_setImage(withURL: url, placeholderImage: placeholderImage)
         } else {
@@ -50,6 +51,9 @@ class MovieCell: UITableViewCell {
         }
     }
     
+    /// Setup cell for favourite entity
+    ///
+    /// - Parameter favourite: favourite entity
     func setupCell(favourite: Favourite) {
         self.favourite = favourite
         
@@ -61,7 +65,7 @@ class MovieCell: UITableViewCell {
             self.labelVote.text = ""
         }
         
-        if let posterPath = favourite.posterPath, let url =  URL(string: APICalls.creteURL(url: posterPath)) {
+        if let posterPath = favourite.posterPath, let url =  URL(string: APICalls.createURLImage(path: posterPath)) {
             let placeholderImage = UIImage(named: "posterPlaceholder")!
             self.imageCover.af_setImage(withURL: url, placeholderImage: placeholderImage)
         } else {
