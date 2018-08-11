@@ -80,6 +80,8 @@ class MovieListController: UIViewController, UITableViewDelegate, UITableViewDat
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         // hide keyboard
         self.textSearch.resignFirstResponder()
+        // deselect table
+        self.tableView.deselectRow(at: indexPath, animated: true)
         
         // get movie and show detail
         let movie = self.movies[indexPath.row]
