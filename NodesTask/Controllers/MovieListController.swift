@@ -8,6 +8,11 @@
 
 import UIKit
 
+/// Sorting enum
+///
+/// - title: Title
+/// - rating: Rating
+/// - release: Release
 enum Sorting: String {
     case title = "title"
     case rating = "rating"
