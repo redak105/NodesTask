@@ -24,6 +24,11 @@ class APICalls: NSObject {
         return URL_IMAGE + path
     }
     
+    /// Check connection to internet
+    class func checkConnection() -> Bool {
+        return NetworkReachabilityManager()!.isReachable
+    }
+    
     /// Cancel all request
     class func cancelAllRequests() {
         Alamofire.SessionManager.default.session.getTasksWithCompletionHandler { (sessionDataTask, uploadData, downloadData) in

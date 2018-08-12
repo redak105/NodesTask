@@ -34,6 +34,7 @@ class MovieListController: UIViewController, UITableViewDelegate, UITableViewDat
     /// type of sorting
     var sorting: Sorting = .title
     
+    /// label to show information to user
     let labelNoData = UILabel()
 
     override func viewDidLoad() {
@@ -157,6 +158,18 @@ class MovieListController: UIViewController, UITableViewDelegate, UITableViewDat
     func loadMovies(query: String?) {
         // check string
         guard let queryString = query else {
+            return
+        }
+        
+        // test connection to internet
+        if !APICalls.checkConnection() {
+            let alert = UIAlertController(title: "Connection error", message: "Check your connection to internet", preferredStyle: .alert)
+            
+            alert.addAction(UIAlertAction(title: "OK", style: .default , handler:{ (UIAlertAction)in
+                self.navigationController?.popViewController(animated: true)
+            }))
+            
+            self.present(alert, animated: true, completion: nil)
             return
         }
         

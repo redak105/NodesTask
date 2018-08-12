@@ -13,6 +13,9 @@ class FavouriteListController: UITableViewController {
     /// list of favourites entities
     var favourites: [Favourite] = []
     
+    /// label to show information to user
+    let labelNoData = UILabel()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -22,6 +25,12 @@ class FavouriteListController: UITableViewController {
         
         // set table
         self.tableView.tableFooterView = UIView()
+        
+        // set label
+        self.labelNoData.textAlignment = .center
+        self.labelNoData.text = "No favourites added"
+        
+        self.tableView.backgroundView = labelNoData
     }    
     
     override func viewWillAppear(_ animated: Bool) {
@@ -31,6 +40,12 @@ class FavouriteListController: UITableViewController {
         // load favourites
         if let favourites = DBQueries.fetchFavourites() {
             self.favourites = favourites
+        }
+        
+        if self.favourites.count == 0 {
+            self.tableView.backgroundView = self.labelNoData
+        } else {
+            self.tableView.backgroundView = nil
         }
         
         self.tableView.reloadData()
