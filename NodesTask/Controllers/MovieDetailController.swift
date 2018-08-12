@@ -16,7 +16,8 @@ class MovieDetailController: UIViewController {
     @IBOutlet weak var labelTitle: UILabel!
     @IBOutlet weak var labelLang: UILabel!
     @IBOutlet weak var labelVote: UILabel!
-    @IBOutlet weak var labelOverview: UILabel!
+    @IBOutlet weak var labelRelease: UILabel!
+    @IBOutlet weak var textViewOverview: UITextView!
     @IBOutlet weak var labelGenres: UILabel!
     @IBOutlet weak var barButtonFavourite: UIBarButtonItem!
     
@@ -32,9 +33,10 @@ class MovieDetailController: UIViewController {
         self.labelTitle.text = ""
         self.labelLang.text = ""
         self.labelVote.text = ""
-        self.labelOverview.text = ""
-        self.imageMovie.image = nil
         self.labelGenres.text = ""
+        self.textViewOverview.text = ""
+        self.imageMovie.image = nil
+        self.labelRelease.text = ""
         
         // set favourite button
         var id: Int32? = nil
@@ -61,7 +63,7 @@ class MovieDetailController: UIViewController {
                     let title = data["title"] as? String
                     self.title = title
                     self.labelTitle.text = title
-                    self.labelOverview.text = data["overview"] as? String
+                    self.textViewOverview.text = data["overview"] as? String
                     
                     self.imageMovie.image = UIImage(named: "posterPlaceholder")!
                     
@@ -69,6 +71,12 @@ class MovieDetailController: UIViewController {
                         self.labelLang.text = lang.uppercased()
                     } else {
                         self.labelLang.text = ""
+                    }
+                    
+                    if let dateString = data["release_date"] as? String, let date = Date(string: dateString) {
+                        self.labelRelease.text = date.format()
+                    } else {
+                        self.labelRelease.text = ""
                     }
                     
                     if let vote = data["vote_average"] as? Float {
@@ -90,6 +98,14 @@ class MovieDetailController: UIViewController {
                         
                         self.labelGenres.text = genresString
                     }
+                } else {
+                    let alert = UIAlertController(title: "Loading error", message: "Load detail of movie did not success. Please chek your internet connection", preferredStyle: .alert)
+                    
+                    alert.addAction(UIAlertAction(title: "OK", style: .default , handler:{ (UIAlertAction)in
+                        self.navigationController?.popViewController(animated: true)
+                    }))
+                    
+                    self.present(alert, animated: true, completion: nil)
                 }
             }
         }
