@@ -33,6 +33,8 @@ class MovieListController: UIViewController, UITableViewDelegate, UITableViewDat
     var order: Bool = true
     /// type of sorting
     var sorting: Sorting = .title
+    
+    let labelNoData = UILabel()
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -47,6 +49,12 @@ class MovieListController: UIViewController, UITableViewDelegate, UITableViewDat
         // set buttons
         self.buttonOrder.setTitle(self.sorting.rawValue.uppercased(), for: .normal)
         self.buttonAsc.setTitle("ASC", for: .normal)
+        
+        // set label
+        self.labelNoData.textAlignment = .center
+        self.labelNoData.text = "No movies loaded"
+        
+        self.tableView.backgroundView = labelNoData
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -199,6 +207,12 @@ class MovieListController: UIViewController, UITableViewDelegate, UITableViewDat
                 }
             })
             
+            if self.movies.count == 0 {
+                self.tableView.backgroundView = self.labelNoData
+            } else {
+                self.tableView.backgroundView = nil
+            }
+            
             self.tableView.reloadData()
         }
     }
@@ -215,6 +229,7 @@ class MovieListController: UIViewController, UITableViewDelegate, UITableViewDat
             self.loadMovies(query: query)
         } else {
             // clear data
+            self.tableView.backgroundView = nil
             self.movies = []
             self.tableView.reloadData()
         }
@@ -225,6 +240,7 @@ class MovieListController: UIViewController, UITableViewDelegate, UITableViewDat
     /// - Parameter sender: sender UIButton
     @IBAction func touchClear(_ sender: UIButton) {
         self.textSearch.text = ""
+        self.tableView.backgroundView = nil
         self.movies = []
         self.tableView.reloadData()
     }
